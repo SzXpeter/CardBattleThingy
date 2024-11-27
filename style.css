@@ -1,0 +1,56 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0; /* Szürkés háttér */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 60%;
+  }
+  
+  .character-placeholder {
+    width: 100px;  /* Magasság/szélesség az eredeti képarány szerint */
+    height: 300px;
+    background-color: #00ff00; /* Zöld paca */
+    border-radius: 50px; /* Körszerű forma */
+  }
+  
+  .content {
+    text-align: left;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    font-weight: normal;
+    color: #000;
+    margin-bottom: 20px;
+  }
+  
+  .menu-button {
+    display: block;
+    width: 150px;
+    padding: 10px;
+    margin: 5px 0;
+    text-align: left;
+    font-size: 1rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .menu-button.highlight {
+    background: linear-gradient(to right, #ffffcc, #ffff99); /* Sárgás kiemelés */
+  }
+  
+  .menu-button:hover {
+    background: #e6e6e6; /* Hover hatás */
+  }
+  
