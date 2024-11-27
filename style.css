@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0; /* Szürkés háttér */
+    background-color: #f0f0f0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,10 +16,10 @@ body {
   }
   
   .character-placeholder {
-    width: 100px;  /* Magasság/szélesség az eredeti képarány szerint */
+    width: 100px;
     height: 300px;
-    background-color: #00ff00; /* Zöld paca */
-    border-radius: 50px; /* Körszerű forma */
+    background-color: #00ff00;
+    border-radius: 50px;
   }
   
   .content {
@@ -47,10 +47,10 @@ body {
   }
   
   .menu-button.highlight {
-    background: linear-gradient(to right, #ffffcc, #ffff99); /* Sárgás kiemelés */
+    background: linear-gradient(to right, #ffffcc, #ffff99);
   }
   
   .menu-button:hover {
-    background: #e6e6e6; /* Hover hatás */
+    background: #e6e6e6;
   }
   
