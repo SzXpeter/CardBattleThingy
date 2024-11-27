@@ -1,0 +1,17 @@
+*{
+    background-color: #f0f0f0;
+}
+
+.foCim{
+    font-family: algerian, courier;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.szoveg{
+    margin-left: 100px;
+    margin-right: 100px;
+    font-size: 1.5em;
+}
