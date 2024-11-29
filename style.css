@@ -93,3 +93,47 @@ h1 {
   width: 150px;
   margin: 10px 50px;
 }
+
+#fight {
+  position: absolute;
+  width: 100%;
+  height: calc(100vh/3*2);
+  background-color: rgba(100, 100, 100, .1);
+}
+
+#ui {
+  position: absolute;
+  width: 100%;
+  height: calc(100vh/3);
+  background-color: rgba(0, 0, 0, .1);
+  bottom: 0;
+}
+
+#rounds {
+  margin: 0;
+  text-align: center;
+  font-size: 3rem;
+  padding-top: 20px;
+}
+
+#characters {
+  position: absolute;
+  bottom: 0;
+}
+
+#characters, #enemies {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+#enemies {
+  width: 1100px;
+}
+
+#hero, #enemies div {
+  height: 500px;
+  width: 300px;
+  border-radius: 50px;
+  background-color: rgba(0, 0, 0, .3);
+}
