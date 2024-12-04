@@ -80,12 +80,12 @@ h1 {
   font-size: 1.5rem;
 }
 
-.card-example .card-img {
+.card-example .card-example-img {
   width: 150px;
   margin: 10px 50px;
 }
 
-.card-img {background-color: white;}
+.card-example-img {background-color: white;}
 
 #fight {
   position: absolute;
@@ -190,4 +190,51 @@ h1 {
 #enemy1, #enemy2, #enemy3 {
   display: flex;
   justify-content: center;
+}
+/* Kártyák stílusa */
+.card {
+  display: inline-block;
+  margin: 20px;
+  width: 150px;
+  height: 200px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  position: relative;
+  animation: slideIn 1s ease-out forwards;
+}
+
+.card-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+/* Animáció, ami a kártyákat beviszi */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Glow effekt */
+.card:hover .card-img {
+  box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+  transform: scale(1.1);
+}
+
+
+
+.card {
+  cursor: grab;
+}
+
+.card.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
 }
