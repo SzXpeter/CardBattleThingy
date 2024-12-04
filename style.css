@@ -92,7 +92,7 @@ h1 {
   width: 100%;
   height: calc(100vh/7*5);
   /* background-color: rgba(100, 100, 100, .1); */
-  background-image: url(Pictures/pixel-battlefield.gif);
+  background-image: url(Pictures/pixel-battlefield.png);
   background-size: cover;
   background-position-y: -100px;
 }
