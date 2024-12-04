@@ -72,7 +72,7 @@ h1 {
   flex-direction: column;
 }
 
-.card {
+.card-example {
   display: flex;
   align-items: center;
   justify-content: left;
@@ -80,7 +80,7 @@ h1 {
   font-size: 1.5rem;
 }
 
-.card .card-img {
+.card-example .card-img {
   width: 150px;
   margin: 10px 50px;
 }
@@ -90,14 +90,17 @@ h1 {
 #fight {
   position: absolute;
   width: 100%;
-  height: calc(100vh/3*2);
-  background-color: rgba(100, 100, 100, .1);
+  height: calc(100vh/7*5);
+  /* background-color: rgba(100, 100, 100, .1); */
+  background-image: url(Pictures/pixel-battlefield.gif);
+  background-size: cover;
+  background-position-y: -100px;
 }
 
 #ui {
   position: absolute;
   width: 100%;
-  height: calc(100vh/3);
+  height: calc(100vh/7*2);
   background-color: rgba(0, 0, 0, .1);
   bottom: 0;
 }
@@ -111,7 +114,7 @@ h1 {
 
 #characters {
   position: absolute;
-  bottom: 0;
+  bottom: 50px;
 }
 
 #characters, #enemies {
@@ -125,20 +128,24 @@ h1 {
 }
 
 #hero, #enemy1, #enemy2, #enemy3 {
-  height: 500px;
+  height: 450px;
   width: 300px;
-  border-radius: 50px;
-  background-color: rgba(0, 0, 0, .3);
+  /* border-radius: 50px;
+  background-color: rgba(0, 0, 0, .3); */
 }
 
 .hp-container, .mana-container {
   background-color: rgba(100, 100, 100, 0.2);
   width: 80%;
   height: 20px;
-  margin-top: 5%;
-  margin-left: calc(10% - 4px);
+  margin-top: 20px;
+  margin-left: calc(10% - 5px);
   border: black solid 4px;
   border-radius: 5px;
+}
+
+.mana-container {
+  margin-top: 5px;
 }
 
 .hptext, .manatext {
@@ -165,4 +172,22 @@ h1 {
   width: 100%;
   height: 100%;
   opacity: .6;
+}
+
+#enemies img {
+  height: 350px;
+  position: absolute;
+  bottom: 0;
+}
+
+#hero img {
+  width: 200px;
+  position: absolute;
+  bottom: 0;
+  margin-left: 50px;
+}
+
+#enemy1, #enemy2, #enemy3 {
+  display: flex;
+  justify-content: center;
 }
