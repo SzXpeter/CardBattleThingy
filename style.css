@@ -94,6 +94,8 @@ h1 {
   margin: 10px 50px;
 }
 
+.card-img {background-color: white;}
+
 #fight {
   position: absolute;
   width: 100%;
