@@ -1,9 +1,9 @@
-// A kártyák drag-and-drop eseményei
 const cards = document.querySelectorAll('.card');
-const ui = document.getElementById('ui');
+const characters = document.querySelectorAll('.character');
 
+// Drag and Drop események
 cards.forEach(card => {
-    card.addEventListener('dragstart', (e) => {
+    card.addEventListener('dragstart', () => {
         card.classList.add('dragging');
     });
 
@@ -12,23 +12,60 @@ cards.forEach(card => {
     });
 });
 
-ui.addEventListener('dragover', (e) => {
-    e.preventDefault(); // Engedélyezi a drop eseményt
-    const draggingCard = document.querySelector('.dragging');
-    const closestCard = getClosestCard(e.clientX, e.clientY);
-    ui.insertBefore(draggingCard, closestCard);
-});
+characters.forEach(character => {
+    character.addEventListener('dragover', (e) => {
+        e.preventDefault(); // Enable drop event
+        character.classList.add('dragover');
+    });
 
-function getClosestCard(x, y) {
-    let closest = null;
-    let closestDistance = Number.POSITIVE_INFINITY;
-    cards.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        const dist = Math.sqrt(Math.pow(x - rect.x, 2) + Math.pow(y - rect.y, 2));
-        if (dist < closestDistance) {
-            closestDistance = dist;
-            closest = card;
+    character.addEventListener('dragleave', () => {
+        character.classList.remove('dragover');
+    });
+
+    character.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const draggingCard = document.querySelector('.dragging');
+        if (draggingCard) {
+            const cardType = draggingCard.dataset.card;
+            const characterName = character.dataset.name;
+
+            // A kártya típusának alapján végrehajtott műveletek
+            if (cardType === 'Lightning Strike') {
+                // Ha Lightning Strike kártyát dobtak le, csökkentsük az HP-t 20-al
+                const hpText = character.querySelector('.hptext span');
+                let currentHp = parseInt(hpText.innerText);
+                currentHp -= 20; // Csökkentjük a HP-t 20-mal
+                if (currentHp < 0) currentHp = 0; // Ne legyen negatív HP
+
+                hpText.innerText = currentHp; // Frissítjük a HP-t
+
+                // Animáció a HP csíknál is
+                const hpBar = character.querySelector('.hpplus');
+                const hpWidth = (currentHp / 100) * 100; // A HP csík szélessége
+                hpBar.style.width = `${hpWidth}%`; // A szélesség dinamikus frissítése
+
+                triggerShakeAnimation(character); // Rázkódó animáció
+            }
+
+            // Eltüntetjük a kártyát
+            draggingCard.style.display = 'none'; 
+            
+            // HP szöveg középre helyezése
+            const hpText = character.querySelector('.hptext');
+            hpText.style.textAlign = 'center'; // Biztosítjuk, hogy középen legyen a szöveg
+
+            // Az animáció befejezését követően eltávolítjuk a rázkódást
+            setTimeout(() => {
+                character.classList.remove('shaking', 'dragover');
+            }, 500); // 500ms után eltávolítjuk az animációkat
         }
     });
-    return closest;
+});
+
+// Rázkódó animáció alkalmazása
+function triggerShakeAnimation(character) {
+    character.classList.add('shaking'); // A rázkódó animáció osztály hozzáadása
+    setTimeout(() => {
+        character.classList.remove('shaking'); // Az animáció eltávolítása
+    }, 500); // 500ms után eltávolítjuk az animációt
 }
