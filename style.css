@@ -218,6 +218,7 @@ h1 {
 }
 
 /* Rázkódó animáció */
+/* Rázkódó animáció */
 @keyframes shake {
   0% { transform: translateX(0); }
   25% { transform: translateX(-5px); }
@@ -227,23 +228,34 @@ h1 {
 }
 
 .shaking {
-  animation: shake 0.5s ease-in-out; /* 0.5 másodperces rázkódás */
+  animation: shake 0.5s ease-in-out;
 }
 
-/* A karakterek képe pirosra változik, amikor sérülnek */
-.character.shaking img {
-  filter: hue-rotate(180deg) saturate(5) brightness(0.5); /* Piros szűrő és erősítés */
-  box-shadow: 0 0 15px rgba(255, 0, 0, 1); /* Erős piros árnyék */
+#enemy1 .character.shaking img {
+  filter: hue-rotate(20deg) saturate(5) brightness(0.5);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 1);
+}
+
+#enemy2 .character.shaking img {
+  filter: hue-rotate(180deg) saturate(5) brightness(0.5);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 1);
+}
+
+#enemy3 .character.shaking img {
+  filter: hue-rotate(180deg) saturate(5) brightness(0.5);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 1);
 }
 
 /* HP csíkok színének frissítése */
 #hero .hp-container .hpplus {
-    background-color: rgba(0, 255, 0, 0.3); /* Zöld szín, ha a hős HP-ja csökken */
+    background-color: rgba(0, 255, 0, 0.3);
 }
 
 #enemies .character .hp-container .hpplus {
-    background-color: rgba(255, 0, 0, 0.3); /* Piros szín, ha az ellenség HP-ja csökken */
+    background-color: rgba(255, 0, 0, 0.3);
 }
+
+
 
 .hptext {
   display: flex;
