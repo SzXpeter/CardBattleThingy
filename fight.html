@@ -6,78 +6,33 @@
     <title>Slay the Beast</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body style="overflow-y: hidden;">
     <div id="fight">
-        <a href="index.html" class="back-button"><img src="Pictures/backbutton.png" alt="back" class="button"></a>
+        <a href="index.html" class="back-button"><img src="Pictures/backbutton.png" alt="back" class="button" style="width: 50px;"></a>
         <p id="rounds">Kör: 1/3</p>
         <div id="characters">
-            <div id="hero" class="character" data-name="Hero">
-                <div class="hp-container">
-                    <div class="hpplus">
-                        <p class="hptext">
-                            <span>100</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="mana-container">
-                    <div class="manaplus">
-                        <p class="manatext">
-                            <span>100</span>
-                        </p>
-                    </div>
-                </div>
+            <div id="hero">
+                <p class="hp-container">
+                    <span id="health-current-player">100</span>
+                    /
+                    <span id="health-max-player">100</span>
+                </p>
+                <p class="mana-container">
+                    <span id="mana-current-player">100</span>
+                    /
+                    <span id="mana-max-player">100</span>
+                </p>
                 <img src="Pictures/Player.png" alt="">
             </div>
-            <div id="enemies">
-                <div id="enemy1" class="character" data-name="Tank">
-                    <div class="hp-container">
-                        <div class="hpplus">
-                            <p class="hptext">
-                                <span>100</span>
-                            </p>
-                        </div>
-                    </div>
-                    <img src="Pictures/Tank.png" alt="">
-                </div>
-                <div id="enemy2" class="character" data-name="Assassin 1">
-                    <div class="hp-container">
-                        <div class="hpplus">
-                            <p class="hptext">
-                                <span>100</span>
-                            </p>
-                        </div>
-                    </div>
-                    <img src="Pictures/Assassin.png" alt="">
-                </div>
-                <div id="enemy3" class="character" data-name="Assassin 2">
-                    <div class="hp-container">
-                        <div class="hpplus">
-                            <p class="hptext">
-                                <span>100</span>
-                            </p>
-                        </div>
-                    </div>
-                    <img src="Pictures/Assassin.png" alt="">
-                </div>
-            </div>
+            <div id="enemies"></div>
         </div>
     </div>
     <div id="ui">
-        <div class="cards-container">
-            <div class="card" id="card1" draggable="true" data-card="Debuff">
-                <img src="Pictures/debuff_card.png" alt="Card 1" class="card-img">
-            </div>
-            <div class="card" id="card2" draggable="true" data-card="Healing">
-                <img src="Pictures/healing_card.png" alt="Card 2" class="card-img">
-            </div>
-            <div class="card" id="card3" draggable="true" data-card="Lightning Strike">
-                <img src="Pictures/lighning_strike_card.png" alt="Card 3" class="card-img">
-            </div>
-            <div class="card" id="card4" draggable="true" data-card="Health Regen">
-                <img src="Pictures/health_regen_card.png" alt="Card 4" class="card-img">
-            </div>
-        </div>
+        <div id="mana" style="flex: 2;"></div>
+        <div id="cards" style="flex: 3;"></div>
+        <div id="next-card" style="flex: 2;"></div>
     </div>
-    <script src="script.js"></script>
+
+    <script src="scripts/script.js"></script>
 </body>
 </html>
