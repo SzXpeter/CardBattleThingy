@@ -1,8 +1,3 @@
-const Target = {
-    Friendly: "Friendly",
-    Enemy: "Enemy"
-}
-
 class Card {
     constructor(Type, Mana, Value, Image) {
         this.Type = Type;
@@ -50,7 +45,6 @@ CardTypes.forEach(card => {
 
 EnemyTypes.forEach(enemy => {
     CreateEnemy(enemy);
-
 })
 
 function CreateCard(card) {
@@ -122,9 +116,10 @@ function CreateEnemy(enemy) {
         return;
 
     const EnemyElement = document.createElement("div");
-    EnemyElement.id = "Enemy" + index;
+    EnemyElement.id = "enemy" + index;
     EnemyElement.classList.add(enemy.Name);
     EnemyElement.classList.add("enemy");
+    EnemyElement.classList.add("enemy-" + index);
 
     const dmg = document.createElement("p");
     dmg.id = "dmg-" + index;
@@ -156,6 +151,11 @@ function CreateEnemy(enemy) {
         const percentage = (current / max) * 100;
 
         health.style.background = `linear-gradient(90deg, rgba(255, 0, 0, 1) ${percentage}%, rgba(100, 100, 100, 0.5) ${percentage}%)`;
+        document.getElementById(EnemyElement.id).style.animation = "none";
+        document.getElementById(EnemyElement.id).style.animation = "shake 0.2s";
+        
+        if (current <= 0)
+            document.getElementById(EnemyElement.id).remove();
     });
 
     observer.observe(health, { characterData: true, subtree: true, childList: true });
@@ -164,20 +164,16 @@ function CreateEnemy(enemy) {
     image.src = enemy.Image;
     EnemyElement.appendChild(image);
 
-    EnemyElement.addEventListener('mouseenter', function () {
+    EnemyElement.addEventListener('mouseenter', function() {
         document.getElementById(CurrentHealth.id).innerHTML = document.getElementById(CurrentHealth.id).innerHTML - 10; // Simulate health change
+    });
+
+    EnemyElement.addEventListener('animationend', function() {
+        document.getElementById(EnemyElement.id).style.animation = "none";
     });
 
     if (CurrentEnemies.length) {
         Enemies.appendChild(EnemyElement);
         CurrentEnemies[index] = EnemyElement;
-    }
-}
-
-function BarChange(BarId, NewPercent, Color) {
-    if (document.getElementById(BarId) != null)
-    {
-        console.log("fuck");
-        document.getElementById(BarId).style.backgroundColor = `linear-gradient(90deg, ${Color} ${NewPercent}%, rgba(100,100,100,0.5) ${NewPercent}%)`;
     }
 }
