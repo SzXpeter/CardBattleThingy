@@ -65,7 +65,7 @@ h1 {
   margin-bottom: 5px;
 }
 
-#cards {
+#magyarazat #cards {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -258,9 +258,8 @@ h1 {
   cursor: grab;
 }
 
-#cards {
+#harc #cards {
   background-color: #f0f0f0;
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
 }

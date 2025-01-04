@@ -9,13 +9,13 @@ class Card {
 const CardTypes = [
     new Card("Attack",          1, 15, "Pictures/Cards/Attack.png"),
     new Card("LightningStrike", 2, 12, "Pictures/Cards/LightningStrike.png"),
-    new Card("Heal",            2, 15, "Pictures/Cards/Heal.png"),
-    new Card("Regen",           3, 10, "Pictures/Cards/Regen.png"),
+    new Card("PommelStrike",    0, 4,  "Pictures/Cards/PommelStrike.png"),
+    new Card("Heal",            3, 25, "Pictures/Cards/Heal.png"),
     new Card("AttackDebuff",    2, 25, "Pictures/Cards/AttackDebuff.png"),
-    new Card("DefenseDebuff",   2, 25, "Pictures/Cards/DefenseDebuff.png"),
+    new Card("DefenseDebuff",   2, 50, "Pictures/Cards/DefenseDebuff.png"),
     new Card("AttackUp",        3, 15, "Pictures/Cards/AttackUp.png"),
-    new Card("Block",           1, 1,  "Pictures/Cards/Block.png"),
-    new Card("DrawCards",       0, 2,  "Pictures/Cards/DrawCards.png")
+    new Card("Block",           1, 8,  "Pictures/Cards/Block.png"),
+    new Card("DrawCards",       1, 2,  "Pictures/Cards/DrawCards.png")
 ]
 
 class Enemy {
