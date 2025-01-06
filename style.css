@@ -181,8 +181,8 @@ h1 {
   100% { transform: translate(1px, -2px) rotate(-1deg); }
 }
 
-.hp-container, .mana-container {
-  background-color: rgb(255,0,0);;
+.hp-container, #mana-container {
+  background-color: rgb(255,0,0);
   width: 80%;
   height: 20px;
   margin-top: 20px;
@@ -194,8 +194,9 @@ h1 {
   margin: 5px auto;
 }
 
-.mana-container {
+#mana-container {
   margin-top: 5px;
+  background-color: rgb(85, 85, 255);
 }
 
 #index {
@@ -236,12 +237,39 @@ h1 {
 }
 
 .card-text {
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  text-align: center;
   opacity: 0;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, .75);
+  position: absolute;
+  width: 145px;
+  height: 210px;
+  border-radius: 10px;
+  top: 0;
+  margin: 0;
+  padding: 20px 10px;
+}
+
+.card-text span {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.card-mana {
+  position: absolute;
+  top: -9px;
+  left: 22px;
+  color: white;
+  font-size: 18pt;
 }
 
 .card:hover .card-text {
   opacity: 1;
+}
+
+.card:hover .card-mana {
+  opacity: 0;
 }
 
 /* Animáció, ami a kártyákat beviszi */
@@ -271,5 +299,48 @@ h1 {
 
 #harc #cards {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#stats, #next-turn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#stats p {
+  font-size: 18pt;
+  border: black solid 4px;
+  border-radius: 50px;
+  color: white;
+  text-align: center;
+  margin: 10px;
+  width: 120px;
+  padding: 44.5px 0;
+}
+
+#mana {
+  background-color: rgb(85, 85, 255);
+  background-image: url(Pictures/mana.png);
+  background-size: cover;
+}
+
+#health {
+  background-color: rgb(255, 85, 85);
+  background-image: url(Pictures/heart.png);
+  background-size: cover;
+}
+
+#next-turn button {
+  font-size: 25pt;
+  border-radius: 20px;
+  padding: 10px;
+  border: black 3px solid;
+  background-color: khaki;
+}
+
+#next-turn button:hover {
+  cursor: pointer;
+  transform: scale(1.1);
 }

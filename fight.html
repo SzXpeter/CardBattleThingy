@@ -6,10 +6,10 @@
     <title>Slay the Beast</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body id="harc" style="overflow-y: hidden;">
+<body id="harc" style="overflow-y: hidden;" onload="NextRound()">
     <div id="fight">
         <a href="index.html" class="back-button"><img src="Pictures/backbutton.png" alt="back" class="button" style="width: 50px;"></a>
-        <p id="rounds">Kör: 1/3</p>
+        <p id="rounds">Kör: <span id="current-round">1</span>/3</p>
         <div id="characters">
             <div id="hero">
                 <p class="hp-container">
@@ -17,10 +17,10 @@
                     /
                     <span id="health-max-player">100</span>
                 </p>
-                <p class="mana-container">
-                    <span id="mana-current-player">100</span>
+                <p id="mana-container">
+                    <span id="mana-current-player">0</span>
                     /
-                    <span id="mana-max-player">100</span>
+                    <span id="mana-max-player">5</span>
                 </p>
                 <img src="Pictures/Player.png" alt="">
             </div>
@@ -28,11 +28,13 @@
         </div>
     </div>
     <div id="ui">
-        <div id="mana" style="flex: 2;"></div>
+        <div id="stats" style="flex: 2;">
+            <p id="health"><span class="current">100</span>/<span class="max">100</span></p>
+            <p id="mana"><span class="current" onchange="ManaChange()">0</span>/<span class="max">5</span></p>
+        </div>
         <div id="cards" style="flex: 3;"></div>
-        <div id="next-card" style="flex: 2;"></div>
+        <div id="next-turn" style="flex: 2;"><button onclick="NextTurn()">End Turn</button></div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
