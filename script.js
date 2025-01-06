@@ -1,38 +1,39 @@
 class Card {
-    constructor(Type, Mana, Value, Image, Desc) {
+    constructor(Type, Mana, Value, Image, UsableOn ,Desc) {
         this.Type = Type;
         this.Mana = Mana;
         this.Value = Value;
         this.Image = Image;
+        this.UsableOn = UsableOn;
         this.Desc = Desc;
     }
 }
 const CardTypes = [
-    new Card("Attack",          1, 15, "Pictures/Cards/Attack.png",          "<span>kard támadás</span><br><br>15 sebzést okoz"),
-    new Card("LightningStrike", 1, 10, "Pictures/Cards/LightningStrike.png", "<span>villám csapás</span><br><br>10 sebzést okoz, ha az ellenség el van kábítva kétszer annyit sebez"),
-    new Card("PommelStrike",    0, 4,  "Pictures/Cards/PommelStrike.png",    "<span>kardgomb csapás</span><br><br>4 sebzést okoz és elkábítja az ellenséget 1 körre"),
-    new Card("Heal",            3, 25, "Pictures/Cards/Heal.png",            "<span>gyógítás</span><br><br>25 életerőt gyógyít"),
-    new Card("AttackDebuff",    2, 25, "Pictures/Cards/AttackDebuff.png",    "<span>támadás gyengítés</span><br><br>Az ellenség 25%-kal kevesebbet sebez 3 körig"),
-    new Card("DefenseDebuff",   2, 50, "Pictures/Cards/DefenseDebuff.png",   "<span>védelem gyengítés</span><br><br>Az ellenség 50%-kal több sebzést kap 3 körig"),
-    new Card("AttackUp",        3, 25, "Pictures/Cards/AttackUp.png",        "<span>támadás erősítés</span><br><br>A játékos 25%-kal több sebzést okoz 3 körig"),
-    new Card("Block",           1, 8,  "Pictures/Cards/Block.png",           "<span>védekezés</span><br><br>A játékos kap 8 pajzsot"),
-    new Card("DrawCards",       1, 2,  "Pictures/Cards/DrawCards.png",       "<span>kártya húzás</span><br><br>2 kártyát húz"),
+    new Card("Attack",          1, 15, "Pictures/Cards/Attack.png",          "Enemy",  "<span>kard támadás</span><br><br>15 sebzést okoz"),
+    new Card("LightningStrike", 1, 10, "Pictures/Cards/LightningStrike.png", "Enemy",  "<span>villám csapás</span><br><br>10 sebzést okoz, ha az ellenség el van kábítva kétszer annyit sebez"),
+    new Card("PommelStrike",    0, 5,  "Pictures/Cards/PommelStrike.png",    "Enemy",  "<span>kardgomb csapás</span><br><br>4 sebzést okoz és elkábítja az ellenséget 1 körre(nem stackelődik)"),
+    new Card("Heal",            3, 25, "Pictures/Cards/Heal.png",            "Player", "<span>gyógítás</span><br><br>25 életerőt gyógyít"),
+    new Card("AttackDebuff",    2, 25, "Pictures/Cards/AttackDebuff.png",    "Enemy",  "<span>támadás gyengítés</span><br><br>Az ellenség 25%-kal kevesebbet sebez 3 körig"),
+    new Card("DefenseDebuff",   2, 50, "Pictures/Cards/DefenseDebuff.png",   "Enemy",  "<span>védelem gyengítés</span><br><br>Az ellenség 50%-kal több sebzést kap 3 körig"),
+    new Card("AttackUp",        3, 25, "Pictures/Cards/AttackUp.png",        "Player", "<span>támadás erősítés</span><br><br>A játékos 25%-kal több sebzést okoz 3 körig"),
+    new Card("DrawCards",       1, 2,  "Pictures/Cards/DrawCards.png",       "Player", "<span>kártya húzás</span><br><br>2 kártyát húz"),
 ]
 
 class Enemy {
-    constructor (Name, Health, Damage, Image) {
-        this.Name = Name 
-        this.Health = Health 
-        this.Damage = Damage
-        this.Image = Image
+    constructor (Name, Health, Damage, Image ,Desc) {
+        this.Name = Name;
+        this.Health = Health;
+        this.Damage = Damage;
+        this.Image = Image;
+        this.Desc = Desc;
     }
 }
 const EnemyTypes = [
-    new Enemy("Tank",     150, 10, "Pictures/Tank.png"),
-    new Enemy("Assassin", 50,  20, "Pictures/Assassin.png"),
-    new Enemy("Mage",     100, 10, "Pictures/Mage.png"),
-    new Enemy("Healer",   100, 5,  "Pictures/Healer.png"),
-    new Enemy("Boss",     300, 15, "Pictures/Boss.png"),
+    new Enemy("Tank",     150, 5,  "Pictures/Tank.png",     "5 sebzés, 5 életerő gyógyítás"),
+    new Enemy("Assassin", 50,  12, "Pictures/Assassin.png", "12 sebzés"),
+    new Enemy("Mage",     100, 8,  "Pictures/Mage.png",     "8 sebzés"),
+    new Enemy("Healer",   100, 15, "Pictures/Healer.png",   "15 életerő gyógyítás"),
+    new Enemy("Boss",     300, 15, "Pictures/Boss.png",     "15 sebzés"),
 ]
 
 const Rounds = [
@@ -46,22 +47,88 @@ const Enemies = document.getElementById("enemies")
 const CurrentHand = [null, null, null, null, null, null, null];
 const CurrentEnemies = [null, null, null];
 
+const observer = new MutationObserver(() => {
+    percentage = document.querySelector("#mana .current").innerText / 5 * 100;
+    document.getElementById("mana-container").style.backgroundColor = `linear-gradient(90deg, rgba(85, 85, 255, 1) ${percentage}%, rgba(100, 100, 100, 0.5) ${percentage}%)`;
+    document.getElementById("mana-current-player").innerText = document.querySelector("#mana .current").innerText;
+});
+observer.observe(document.querySelector("#mana .current"), { characterData: true, subtree: true, childList: true });
+
 function NextRound() {
     const CurrentRound = document.getElementById("current-round").innerText;
     CreateEnemy(Rounds[CurrentRound - 1][0]);
     CreateEnemy(Rounds[CurrentRound - 1][1]);
     CreateEnemy(Rounds[CurrentRound - 1][2]);
 
-    NextTurn();
+    document.querySelector("#mana .current").innerText = 5;
+
+    for (i = 0; i < CurrentHand.length; i++)
+    {
+        if (CurrentHand[i] != null)
+        {
+            CurrentHand[i] = null;
+            document.getElementById(`card-${i}`).remove();
+        }
+    }
+
+    for (i = 0; i < 5; i++)
+        CreateCard(RandomCard());
 }
 
 function NextTurn() {
+    index = 0;
+    CurrentEnemies.forEach(enemy => {
+        if (enemy != null && !document.getElementById(`enemy${index}`).classList.contains("stunned"))
+        {
+            switch (enemy.Name) {
+                case "Tank":
+                    for (i = 0; i < 3; i++)
+                    {                      
+                        document.getElementById("health-current-player").innerText -= 5;
+
+                        CurrentHealth = document.getElementById(`health-current-enemy-${i}`);
+                        MaxHealth = document.getElementById(`health-max-enemy-${i}`);
+                        if (CurrentHealth.innerText + 5 <= MaxHealth.innerText)
+                            CurrentHealth.innerText = parseInt(CurrentHealth.innerText) + 5;
+                        else if (CurrentHealth.innerText < MaxHealth.innerText)
+                            CurrentHealth.innerText = MaxHealth.innerText;
+                    }
+                    break;
+                case "Assassin":
+                    document.getElementById("health-current-player").innerText -= 12;
+                    break;
+                case "Mage":
+                    document.getElementById("health-current-player").innerText -= 8;
+                    break;
+                case "Healer":
+                    CurrentHealth = document.getElementById(`health-current-enemy-1`);
+                    MaxHealth = document.getElementById(`health-max-enemy-1`);
+                    if (CurrentHealth.innerText + 15 <= MaxHealth.innerText)
+                        CurrentHealth.innerText += 15;
+                    else if (CurrentHealth.innerText < MaxHealth.innerText)
+                        CurrentHealth.innerText = MaxHealth.innerText;
+                    break;
+                case "Boss":
+                    document.getElementById("health-current-player").innerText -= 15;
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+        index++;
+    });
+
     document.querySelector("#mana .current").innerText = 5;
 
-    // while (FirstFreeIndex() != -1)
-    // {
-
-    // }
+    for (i = 0; i < CurrentHand.length; i++)
+    {
+        if (CurrentHand[i] != null)
+        {
+            CurrentHand[i] = null;
+            document.getElementById(`card-${i}`).remove();
+        }
+    }
 
     for (i = 0; i < 5; i++)
         CreateCard(RandomCard());
@@ -70,24 +137,22 @@ function NextTurn() {
 function RandomCard() {
     rand = Math.floor(Math.random() * 100);
     
-    if (rand < 15)
+    if (rand < 25)
         return CardTypes[0];
-    else if (rand < 25)
-        return CardTypes[1];
     else if (rand < 40)
-        return CardTypes[2];
+        return CardTypes[1];
     else if (rand < 50)
+        return CardTypes[2];
+    else if (rand < 65)
         return CardTypes[3];
-    else if (rand < 60)
+    else if (rand < 75)
         return CardTypes[4];
-    else if (rand < 70)
+    else if (rand < 85)
         return CardTypes[5];
-    else if (rand < 80)
+    else if (rand < 90)
         return CardTypes[6];
-    else if (rand < 95)
-        return CardTypes[7];
     else
-        return CardTypes[8];
+        return CardTypes[7];
 }
 
 function CreateCard(card) {
@@ -98,7 +163,9 @@ function CreateCard(card) {
     const CardElement = document.createElement('div');
     CardElement.classList.add('card');
     CardElement.id = `card-${index}`;
-    CardElement.classList.add(card.Type);
+    CardElement.draggable = "true";
+    CardElement.dataset.cardType = card.Type;
+    CardElement.dataset.type = card.UsableOn;
 
     const CardImg = document.createElement("img");
     CardImg.src = card.Image;
@@ -115,6 +182,12 @@ function CreateCard(card) {
     ManaCost.classList.add("card-mana");
     CardElement.appendChild(ManaCost);
 
+    CardElement.addEventListener('dragstart', function() {
+        event.dataTransfer.setData('text/plain', event.target.dataset.type);
+        event.dataTransfer.setData('id', event.target.id);
+        console.log(event.target.dataset.type);
+        console.log(event.target.id);
+    });
     CardElement.addEventListener('drag', function() {
         CardElement.style.display = "none";
     });
@@ -131,10 +204,8 @@ function CreateCard(card) {
         AdjustCards();
     });
 
-    if (CurrentHand.length) {
-        UI.appendChild(CardElement);
-        CurrentHand[index] = CardElement;
-    }
+    UI.appendChild(CardElement);
+    CurrentHand[index] = card;
     AdjustCards();
 }
 
@@ -171,9 +242,10 @@ function CreateEnemy(enemy) {
 
     const EnemyElement = document.createElement("div");
     EnemyElement.id = "enemy" + index;
-    EnemyElement.classList.add(enemy.Name);
     EnemyElement.classList.add("enemy");
     EnemyElement.classList.add("enemy-" + index);
+    EnemyElement.dataset.enemyType = enemy.Name;
+    EnemyElement.dataset.accept = "Enemy";
 
     const dmg = document.createElement("p");
     dmg.id = "dmg-" + index;
@@ -197,6 +269,11 @@ function CreateEnemy(enemy) {
     health.innerHTML += " / ";
     health.appendChild(MaxHealth);
     EnemyElement.appendChild(health);
+
+    const Intentions = document.createElement("p");
+    Intentions.innerHTML = "<h2>Indulatok: </h2> " + enemy.Desc;
+    Intentions.classList.add("intentions");
+    EnemyElement.appendChild(Intentions);
 
     // Add MutationObserver for CurrentHealth changes
     const observer = new MutationObserver(() => {
@@ -224,15 +301,18 @@ function CreateEnemy(enemy) {
     EnemyElement.addEventListener('animationend', function() {
         document.getElementById(EnemyElement.id).style.animation = "none";
     });
+    EnemyElement.addEventListener('dragover', DragOver);
 
-    if (CurrentEnemies.length) {
-        Enemies.appendChild(EnemyElement);
-        CurrentEnemies[index] = EnemyElement;
-    }
+    Enemies.appendChild(EnemyElement);
+    CurrentEnemies[index] = enemy;
 }
 
-function ManaChange() {
-    percentage = document.querySelector("#mana .current").innerText / 5 * 100;
-    document.getElementById("mana-container").style.backgroundColor = `linear-gradient(90deg, rgba(85, 85, 255, 1) ${percentage}%, rgba(100, 100, 100, 0.5) ${percentage}%)`;
-    document.getElementById("mana-current-player").innerText = document.querySelector("#mana .current").innerText;
+function DragOver(event) {
+    const draggedType = event.dataTransfer.getData('text/plain');
+    const acceptType = event.target.dataset.accept;
+
+    if (draggedType == acceptType)
+    {
+        event.preventDefault();
+    }
 }
