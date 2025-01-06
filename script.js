@@ -11,11 +11,11 @@ class Card {
 const CardTypes = [
     new Card("Attack",          1, 15, "Pictures/Cards/Attack.png",          "Enemy",  "<span>kard támadás</span><br><br>15 sebzést okoz"),
     new Card("LightningStrike", 1, 10, "Pictures/Cards/LightningStrike.png", "Enemy",  "<span>villám csapás</span><br><br>10 sebzést okoz, ha az ellenség el van kábítva kétszer annyit sebez"),
-    new Card("PommelStrike",    0, 5,  "Pictures/Cards/PommelStrike.png",    "Enemy",  "<span>kardgomb csapás</span><br><br>4 sebzést okoz és elkábítja az ellenséget 1 körre(nem stackelődik)"),
+    new Card("PommelStrike",    0, 5,  "Pictures/Cards/PommelStrike.png",    "Enemy",  "<span>kardgomb csapás</span><br><br>5 sebzést okoz és elkábítja az ellenséget 1 körre(nem stackelődik)"),
     new Card("Heal",            3, 25, "Pictures/Cards/Heal.png",            "Player", "<span>gyógítás</span><br><br>25 életerőt gyógyít"),
-    new Card("AttackDebuff",    2, 25, "Pictures/Cards/AttackDebuff.png",    "Enemy",  "<span>támadás gyengítés</span><br><br>Az ellenség 25%-kal kevesebbet sebez 3 körig"),
-    new Card("DefenseDebuff",   2, 50, "Pictures/Cards/DefenseDebuff.png",   "Enemy",  "<span>védelem gyengítés</span><br><br>Az ellenség 50%-kal több sebzést kap 3 körig"),
-    new Card("AttackUp",        3, 25, "Pictures/Cards/AttackUp.png",        "Player", "<span>támadás erősítés</span><br><br>A játékos 25%-kal több sebzést okoz 3 körig"),
+    new Card("AttackDebuff",    2, 25, "Pictures/Cards/AttackDebuff.png",    "Enemy",  "<span>támadás gyengítés</span><br><br>Az ellenség 25%-kal kevesebbet sebez örökké"),
+    new Card("DefenseDebuff",   2, 50, "Pictures/Cards/DefenseDebuff.png",   "Enemy",  "<span>védelem gyengítés</span><br><br>Az ellenség 50%-kal több sebzést kap örökké"),
+    new Card("AttackUp",        1, 25, "Pictures/Cards/AttackUp.png",        "Player", "<span>támadás erősítés</span><br><br>A játékos 25%-kal több sebzést okoz ebben a körben"),
     new Card("DrawCards",       1, 2,  "Pictures/Cards/DrawCards.png",       "Player", "<span>kártya húzás</span><br><br>2 kártyát húz"),
 ]
 
@@ -47,12 +47,29 @@ const Enemies = document.getElementById("enemies")
 const CurrentHand = [null, null, null, null, null, null, null];
 const CurrentEnemies = [null, null, null];
 
-const observer = new MutationObserver(() => {
-    percentage = document.querySelector("#mana .current").innerText / 5 * 100;
-    document.getElementById("mana-container").style.backgroundColor = `linear-gradient(90deg, rgba(85, 85, 255, 1) ${percentage}%, rgba(100, 100, 100, 0.5) ${percentage}%)`;
-    document.getElementById("mana-current-player").innerText = document.querySelector("#mana .current").innerText;
+const ManaObserver = new MutationObserver(() => {
+    percentage = document.getElementById("mana-current-player").innerText / 5 * 100;
+    document.getElementById("mana-container").style.background = `linear-gradient(90deg, rgba(0, 0, 255, 1) ${percentage}%, rgba(100, 100, 100, 0.5) ${percentage}%)`;
+    document.querySelector("#mana .current").innerText = document.getElementById("mana-current-player").innerText;
 });
-observer.observe(document.querySelector("#mana .current"), { characterData: true, subtree: true, childList: true });
+ManaObserver.observe(document.getElementById("mana-current-player"), { characterData: true, subtree: true, childList: true });
+
+const HealthObserver = new MutationObserver(() => {
+    const current = parseInt(document.getElementById("health-current-player").innerText, 10);
+    const max = parseInt(document.getElementById("health-max-player").innerText, 10);
+    const percentage = (current / max) * 100;
+
+    document.querySelector("#hero .hp-container").style.background = `linear-gradient(90deg, rgba(255, 0, 0, 1) ${percentage}%, rgba(100, 100, 100, 0.5) ${percentage}%)`;
+
+    if (current <= 0)
+    {
+        document.getElementById("lose").style.display = "block";
+    }
+});
+HealthObserver.observe(document.getElementById("health-current-player"), { characterData: true, subtree: true, childList: true });
+
+document.getElementById("hero").addEventListener('dragover', DragOver);
+document.getElementById("hero").addEventListener('drop', Drop);
 
 function NextRound() {
     const CurrentRound = document.getElementById("current-round").innerText;
@@ -60,78 +77,60 @@ function NextRound() {
     CreateEnemy(Rounds[CurrentRound - 1][1]);
     CreateEnemy(Rounds[CurrentRound - 1][2]);
 
-    document.querySelector("#mana .current").innerText = 5;
-
-    for (i = 0; i < CurrentHand.length; i++)
-    {
-        if (CurrentHand[i] != null)
-        {
-            CurrentHand[i] = null;
-            document.getElementById(`card-${i}`).remove();
-        }
-    }
-
-    for (i = 0; i < 5; i++)
-        CreateCard(RandomCard());
+    RoundStart();
 }
 
 function NextTurn() {
     index = 0;
     CurrentEnemies.forEach(enemy => {
-        if (enemy != null && !document.getElementById(`enemy${index}`).classList.contains("stunned"))
+        if (enemy != null)
         {
-            switch (enemy.Name) {
-                case "Tank":
-                    for (i = 0; i < 3; i++)
-                    {                      
-                        document.getElementById("health-current-player").innerText -= 5;
-
-                        CurrentHealth = document.getElementById(`health-current-enemy-${i}`);
-                        MaxHealth = document.getElementById(`health-max-enemy-${i}`);
-                        if (CurrentHealth.innerText + 5 <= MaxHealth.innerText)
-                            CurrentHealth.innerText = parseInt(CurrentHealth.innerText) + 5;
+            if(!document.getElementById(`enemy${index}`).classList.contains("stunned"))
+            {
+                switch (enemy.Name) 
+                {
+                    case "Tank":
+                        document.getElementById("health-current-player").innerText -= EnemyTypes[0].Damage;
+                        for (i = 0; i < 3; i++)
+                        {
+                            if (document.getElementById(`health-current-enemy-${i}`) == null) continue;
+                            CurrentHealth = document.getElementById(`health-current-enemy-${i}`);
+                            MaxHealth = document.getElementById(`health-max-enemy-${i}`);
+                            if (parseInt(CurrentHealth.innerText) + 5 <= MaxHealth.innerText)
+                                CurrentHealth.innerText = parseInt(CurrentHealth.innerText) + 5;
+                            else if (CurrentHealth.innerText < MaxHealth.innerText)
+                                CurrentHealth.innerText = MaxHealth.innerText;
+                        }
+                        break;
+                    case "Assassin":
+                        document.getElementById("health-current-player").innerText -= EnemyTypes[1].Damage;
+                        break;
+                    case "Mage":
+                        document.getElementById("health-current-player").innerText -= EnemyTypes[2].Damage;
+                        break;
+                    case "Healer":
+                        if (document.getElementById(`health-current-enemy-0`) == null) break;
+                        CurrentHealth = document.getElementById(`health-current-enemy-0`);
+                        MaxHealth = document.getElementById(`health-max-enemy-0`);
+                        if (parseInt(CurrentHealth.innerText) + 15 <= MaxHealth.innerText)
+                            CurrentHealth.innerText += 15;
                         else if (CurrentHealth.innerText < MaxHealth.innerText)
                             CurrentHealth.innerText = MaxHealth.innerText;
-                    }
-                    break;
-                case "Assassin":
-                    document.getElementById("health-current-player").innerText -= 12;
-                    break;
-                case "Mage":
-                    document.getElementById("health-current-player").innerText -= 8;
-                    break;
-                case "Healer":
-                    CurrentHealth = document.getElementById(`health-current-enemy-1`);
-                    MaxHealth = document.getElementById(`health-max-enemy-1`);
-                    if (CurrentHealth.innerText + 15 <= MaxHealth.innerText)
-                        CurrentHealth.innerText += 15;
-                    else if (CurrentHealth.innerText < MaxHealth.innerText)
-                        CurrentHealth.innerText = MaxHealth.innerText;
-                    break;
-                case "Boss":
-                    document.getElementById("health-current-player").innerText -= 15;
-                    break;
-            
-                default:
-                    break;
+                        break;
+                    case "Boss":
+                        document.getElementById("health-current-player").innerText -= EnemyTypes[4].Damage;
+                        break;
+                    default:
+                        break;
+                }
             }
+            else
+                !document.getElementById(`enemy${index}`).classList.remove("stunned")
         }
         index++;
     });
 
-    document.querySelector("#mana .current").innerText = 5;
-
-    for (i = 0; i < CurrentHand.length; i++)
-    {
-        if (CurrentHand[i] != null)
-        {
-            CurrentHand[i] = null;
-            document.getElementById(`card-${i}`).remove();
-        }
-    }
-
-    for (i = 0; i < 5; i++)
-        CreateCard(RandomCard());
+    RoundStart();
 }
 
 function RandomCard() {
@@ -139,17 +138,17 @@ function RandomCard() {
     
     if (rand < 25)
         return CardTypes[0];
-    else if (rand < 40)
+    else if (rand < 45)
         return CardTypes[1];
-    else if (rand < 50)
+    else if (rand < 60)
         return CardTypes[2];
-    else if (rand < 65)
+    else if (rand < 70)
         return CardTypes[3];
-    else if (rand < 75)
+    else if (rand < 77)
         return CardTypes[4];
-    else if (rand < 85)
+    else if (rand < 84)
         return CardTypes[5];
-    else if (rand < 90)
+    else if (rand < 94)
         return CardTypes[6];
     else
         return CardTypes[7];
@@ -184,9 +183,8 @@ function CreateCard(card) {
 
     CardElement.addEventListener('dragstart', function() {
         event.dataTransfer.setData('text/plain', event.target.dataset.type);
+        event.dataTransfer.setData('dataType', event.target.dataset.cardType);
         event.dataTransfer.setData('id', event.target.id);
-        console.log(event.target.dataset.type);
-        console.log(event.target.id);
     });
     CardElement.addEventListener('drag', function() {
         CardElement.style.display = "none";
@@ -242,10 +240,10 @@ function CreateEnemy(enemy) {
 
     const EnemyElement = document.createElement("div");
     EnemyElement.id = "enemy" + index;
-    EnemyElement.classList.add("enemy");
-    EnemyElement.classList.add("enemy-" + index);
+    EnemyElement.classList.add("enemy");;
     EnemyElement.dataset.enemyType = enemy.Name;
     EnemyElement.dataset.accept = "Enemy";
+    EnemyElement.dataset.index = index;
 
     const dmg = document.createElement("p");
     dmg.id = "dmg-" + index;
@@ -289,9 +287,20 @@ function CreateEnemy(enemy) {
         {
             document.getElementById(EnemyElement.id).remove();
             CurrentEnemies[index] = null;
+
+            if (CurrentEnemies[0] == null && CurrentEnemies[1] == null && CurrentEnemies[2] == null)
+            {
+                CurrentRound = document.getElementById("current-round")
+                if (CurrentRound.innerText == 3)
+                    document.getElementById("win").style.display = "block";
+                else 
+                {
+                    CurrentRound.innerText = parseInt(CurrentRound.innerText) + 1;
+                    NextRound();
+                }
+            }
         }
     });
-
     observer.observe(health, { characterData: true, subtree: true, childList: true });
 
     const image = document.createElement("img");
@@ -301,7 +310,11 @@ function CreateEnemy(enemy) {
     EnemyElement.addEventListener('animationend', function() {
         document.getElementById(EnemyElement.id).style.animation = "none";
     });
+    // EnemyElement.addEventListener('mouseenter', function() {
+    //     document.getElementById(CurrentHealth.id).innerText = parseInt(document.getElementById(CurrentHealth.id).innerText) - 10;
+    // });
     EnemyElement.addEventListener('dragover', DragOver);
+    EnemyElement.addEventListener('drop', Drop);
 
     Enemies.appendChild(EnemyElement);
     CurrentEnemies[index] = enemy;
@@ -315,4 +328,152 @@ function DragOver(event) {
     {
         event.preventDefault();
     }
+}
+
+function Drop(event) {
+    event.preventDefault();
+    const DraggedType = event.dataTransfer.getData('text/plain');
+    const CardType = event.dataTransfer.getData('dataType');
+    const DraggedId = event.dataTransfer.getData('id');
+    if (DraggedType != event.target.dataset.accept) return;
+    bShouldRemove = true;
+    
+    if (DraggedType == "Enemy") {
+        const Target = document.getElementById(event.target.id);
+        const TargetIndex = Target.dataset.index;
+        const TargetHealth = document.getElementById(`health-current-enemy-${TargetIndex}`);
+
+        multiplier = 1;
+        if (Target.classList.contains("DefenseDebuff"))
+            multiplier *= 1.5;
+        if (document.getElementById("hero").classList.contains("AttackUp"))
+            multiplier *= 1.25;
+
+        switch (CardType) {
+            case "Attack":
+                if (ManaDrain(CardTypes[0].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[0].Value * multiplier;
+                break;
+            case "LightningStrike":
+                if (ManaDrain(CardTypes[1].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                if (Target.classList.contains("stunned"))
+                    TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[1].Value * 2 * multiplier;
+                else
+                    TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[1].Value * multiplier;
+                break;
+            case "PommelStrike":
+                if (ManaDrain(CardTypes[2].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                if (!Target.classList.contains("stunned"))
+                    Target.classList.add("stunned");
+                TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[2].Value * multiplier;
+                break;
+            case "AttackDebuff":
+                if (ManaDrain(CardTypes[4].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                if (!Target.classList.contains("AttackDebuff"))
+                    Target.classList.add("AttackDebuff");
+                break;
+            case "DefenseDebuff":
+                if (ManaDrain(CardTypes[5].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                if (!Target.classList.contains("DefenseDebuff"))
+                    Target.classList.add("DefenseDebuff");
+                break;
+            default:
+                break;
+        }
+    }
+    else
+    {
+        const Target = document.getElementById("hero");
+
+        switch (CardType) {
+            case "Heal":
+                const MaxHealth = document.getElementById("health-max-player");
+                const TargetHealth = document.getElementById("health-current-player");
+                if (TargetHealth.innerText == MaxHealth.innerText || ManaDrain(CardTypes[3].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                console.log("Heal")
+                if (parseInt(TargetHealth.innerText) + CardTypes[3].Value <= MaxHealth.innerText)
+                    TargetHealth.innerText = parseInt(TargetHealth.innerText) + CardTypes[3].Value;
+                else
+                {
+                    console.log("fuck");
+                    TargetHealth.innerText = MaxHealth.innerText;
+                }
+                break;
+            case "AttackUp":
+                if (ManaDrain(CardTypes[6].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                console.log("AUp")
+                if (!Target.classList.contains("AttackUp"))
+                    Target.classList.add("AttackUp");
+                break;
+            case "DrawCards":
+                if (ManaDrain(CardTypes[7].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                console.log("Cards")
+                CreateCard(RandomCard());
+                CreateCard(RandomCard());
+                break;
+        
+            default:
+                break;
+        }
+    }
+
+    if (bShouldRemove) {
+        
+        document.getElementById(DraggedId).remove();
+        CurrentHand[DraggedId[5]] = null;
+    }
+}
+
+function RoundStart() {
+    document.getElementById("mana-current-player").innerText = 5;
+    const Target = document.getElementById("hero");
+
+    if (Target.classList.contains("AttackUp"))
+        Target.classList.remove("AttackUp");
+
+    for (i = 0; i < CurrentHand.length; i++)
+    {
+        if (CurrentHand[i] != null)
+        {
+            document.getElementById(`card-${i}`).remove();
+        }
+        CurrentHand[i] = null;
+    }
+
+    for (i = 0; i < 5; i++)
+        CreateCard(RandomCard());
+}
+
+function ManaDrain(Amount) {
+    const ManaBar = document.getElementById("mana-current-player");
+
+    if (ManaBar.innerText - Amount < 0)
+        return null;
+    else 
+        ManaBar.innerText -= Amount;
+    return "nothing";
 }
