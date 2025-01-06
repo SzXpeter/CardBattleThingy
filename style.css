@@ -105,6 +105,8 @@ h1 {
   bottom: 0;
   display: flex;
   justify-content: space-between;
+  background-image: url(Pictures/UIBackground.png);
+  background-size: cover;
 }
 
 #rounds {
@@ -233,6 +235,15 @@ h1 {
   transition: all .2s;
 }
 
+.card-text {
+  opacity: 0;
+  background-color: rgba(0, 0, 0, .5);
+}
+
+.card:hover .card-text {
+  opacity: 1;
+}
+
 /* Animáció, ami a kártyákat beviszi */
 @keyframes slideIn {
   from {
@@ -259,7 +270,6 @@ h1 {
 }
 
 #harc #cards {
-  background-color: #f0f0f0;
   display: flex;
   justify-content: space-between;
 }

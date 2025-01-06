@@ -1,5 +1,5 @@
 class Card {
-    constructor(Type, Mana, Value, Image) {
+    constructor(Type, Mana, Value, Image, Desc) {
         this.Type = Type;
         this.Mana = Mana;
         this.Value = Value;
@@ -30,22 +30,14 @@ const EnemyTypes = [
     new Enemy("Tank",     150, 10, "Pictures/Tank.png"),
     new Enemy("Assassin", 50,  20, "Pictures/Assassin.png"),
     new Enemy("Mage",     100, 10, "Pictures/Mage.png"),
+    new Enemy("Healer",   100, 5,  "Pictures/Healer.png"),
     new Enemy("Boss",     300, 15, "Pictures/Boss.png"),
-    new Enemy("Healer",   100, 5,  "Pictures/Healer.png")
 ]
 
 const UI = document.getElementById("cards");
 const Enemies = document.getElementById("enemies")
 const CurrentHand = [null, null, null, null, null, null, null];
 const CurrentEnemies = [null, null, null];
-
-CardTypes.forEach(card => {
-    CreateCard(card);
-});
-
-EnemyTypes.forEach(enemy => {
-    CreateEnemy(enemy);
-})
 
 function CreateCard(card) {
     index = FirstFreeIndex(CurrentHand);
@@ -60,7 +52,12 @@ function CreateCard(card) {
     CardImg.src = card.Image;
     CardImg.classList.add("card-img");
     CardElement.appendChild(CardImg);
-    
+
+    const CardText = document.createElement("p");
+    CardText.innerText = card.Desc;
+    CardText.classList.add("card-text");
+    CardElement.appendChild(CardText);
+
     CardElement.addEventListener('drag', function() {
         CardElement.style.display = "none";
     });
