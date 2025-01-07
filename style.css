@@ -7,9 +7,16 @@ body {
 
 .container {
   width: 1200px;
-  margin: auto;
+  margin-left: 800px;
   display: flex;
   justify-content: space-around;
+  flex-direction: column;
+  align-items: center;
+}
+
+.typed-text-cont {
+  margin-left: 50px;
+  align-items: center;
 }
 
 h1 {
@@ -414,4 +421,34 @@ h1 {
 
 .intentions span {
   display: none;
+}
+
+.typed-text-cont p {
+  font-size: 3rem;
+  padding: 0.5rem;
+  font-weight: bold;
+  letter-spacing: 0.1rem;
+  text-align: center;
+  overflow: hidden;
+}
+.typed-text-cont p span.typed-text {
+  font-weight: normal;
+  color: #dd7732;
+}
+.typed-text-cont p span.cursor {
+  display: inline-block;
+  background-color: #ccc;
+  margin-left: 0.1rem;
+  width: 3px;
+  animation: blink 1s infinite;
+}
+.typed-text-cont p span.cursor.typing {
+  animation: none;
+}
+@keyframes blink {
+  0%  { background-color: #ccc; }
+  49% { background-color: #ccc; }
+  50% { background-color: transparent; }
+  99% { background-color: transparent; }
+  100%  { background-color: #ccc; }
 }
