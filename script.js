@@ -60,7 +60,7 @@ const HealthObserver = new MutationObserver(() => {
     const percentage = (current / max) * 100;
 
     document.querySelector("#hero .hp-container").style.background = `linear-gradient(90deg, rgba(255, 0, 0, 1) ${percentage}%, rgba(100, 100, 100, 0.5) ${percentage}%)`;
-
+    document.querySelector("#health .current").innerText = current;
     if (current <= 0)
     {
         document.getElementById("lose").style.display = "block";
@@ -109,12 +109,12 @@ function NextTurn() {
                         document.getElementById("health-current-player").innerText -= EnemyTypes[2].Damage;
                         break;
                     case "Healer":
-                        if (document.getElementById(`health-current-enemy-0`) == null) break;
                         CurrentHealth = document.getElementById(`health-current-enemy-0`);
                         MaxHealth = document.getElementById(`health-max-enemy-0`);
+                        if (document.getElementById(`health-current-enemy-0`) == null || MaxHealth == CurrentHealth) break;
                         if (parseInt(CurrentHealth.innerText) + 15 <= MaxHealth.innerText)
-                            CurrentHealth.innerText += 15;
-                        else if (CurrentHealth.innerText < MaxHealth.innerText)
+                            CurrentHealth.innerText = parseInt(CurrentHealth.innerText) + 15;
+                        else
                             CurrentHealth.innerText = MaxHealth.innerText;
                         break;
                     case "Boss":
