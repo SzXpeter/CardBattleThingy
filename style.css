@@ -2,7 +2,7 @@ body {
   margin: 0;
   height: 100vh;
   background-color: #f0f0f0;
-  font-family: algerian, courier;
+  font-family: algerian, Arial, Helvetica, sans-serif;
 }
 
 .container {
@@ -410,4 +410,8 @@ h1 {
   top: 0;
   margin: 0;
   padding: 20px 10px;
+}
+
+.intentions span {
+  display: none;
 }

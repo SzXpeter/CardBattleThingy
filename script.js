@@ -1,5 +1,5 @@
 class Card {
-    constructor(Type, Mana, Value, Image, UsableOn ,Desc) {
+    constructor(Type, Mana, Value, Image, UsableOn, Desc) {
         this.Type = Type;
         this.Mana = Mana;
         this.Value = Value;
@@ -9,18 +9,18 @@ class Card {
     }
 }
 const CardTypes = [
-    new Card("Attack",          1, 15, "Pictures/Cards/Attack.png",          "Enemy",  "<span>kard támadás</span><br><br>15 sebzést okoz"),
-    new Card("LightningStrike", 1, 10, "Pictures/Cards/LightningStrike.png", "Enemy",  "<span>villám csapás</span><br><br>10 sebzést okoz, ha az ellenség el van kábítva kétszer annyit sebez"),
-    new Card("PommelStrike",    0, 5,  "Pictures/Cards/PommelStrike.png",    "Enemy",  "<span>kardgomb csapás</span><br><br>5 sebzést okoz és elkábítja az ellenséget 1 körre(nem stackelődik)"),
-    new Card("Heal",            3, 25, "Pictures/Cards/Heal.png",            "Player", "<span>gyógítás</span><br><br>25 életerőt gyógyít"),
-    new Card("AttackDebuff",    2, 25, "Pictures/Cards/AttackDebuff.png",    "Enemy",  "<span>támadás gyengítés</span><br><br>Az ellenség 25%-kal kevesebbet sebez örökké"),
-    new Card("DefenseDebuff",   2, 50, "Pictures/Cards/DefenseDebuff.png",   "Enemy",  "<span>védelem gyengítés</span><br><br>Az ellenség 50%-kal több sebzést kap örökké"),
-    new Card("AttackUp",        1, 25, "Pictures/Cards/AttackUp.png",        "Player", "<span>támadás erősítés</span><br><br>A játékos 25%-kal több sebzést okoz ebben a körben"),
-    new Card("DrawCards",       1, 2,  "Pictures/Cards/DrawCards.png",       "Player", "<span>kártya húzás</span><br><br>2 kártyát húz"),
+    new Card("Attack", 1, 15, "Pictures/Cards/Attack.png", "Enemy", "<span>kard támadás</span><br><br>15 sebzést okoz"),
+    new Card("LightningStrike", 1, 10, "Pictures/Cards/LightningStrike.png", "Enemy", "<span>villám csapás</span><br><br>10 sebzést okoz, ha az ellenség el van kábítva kétszer annyit sebez"),
+    new Card("PommelStrike", 0, 5, "Pictures/Cards/PommelStrike.png", "Enemy", "<span>kardgomb csapás</span><br><br>5 sebzést okoz és elkábítja az ellenséget 1 körre(nem stackelődik)"),
+    new Card("Heal", 3, 25, "Pictures/Cards/Heal.png", "Player", "<span>gyógítás</span><br><br>25 életerőt gyógyít"),
+    new Card("AttackDebuff", 2, 25, "Pictures/Cards/AttackDebuff.png", "Enemy", "<span>támadás gyengítés</span><br><br>Az ellenség 25%-kal kevesebbet sebez örökké"),
+    new Card("DefenseDebuff", 2, 50, "Pictures/Cards/DefenseDebuff.png", "Enemy", "<span>védelem gyengítés</span><br><br>Az ellenség 50%-kal több sebzést kap örökké"),
+    new Card("AttackUp", 1, 25, "Pictures/Cards/AttackUp.png", "Player", "<span>támadás erősítés</span><br><br>A játékos 25%-kal több sebzést okoz ebben a körben"),
+    new Card("DrawCards", 1, 2, "Pictures/Cards/DrawCards.png", "Player", "<span>kártya húzás</span><br><br>2 kártyát húz"),
 ]
 
 class Enemy {
-    constructor (Name, Health, Damage, Image ,Desc) {
+    constructor(Name, Health, Damage, Image, Desc) {
         this.Name = Name;
         this.Health = Health;
         this.Damage = Damage;
@@ -29,11 +29,11 @@ class Enemy {
     }
 }
 const EnemyTypes = [
-    new Enemy("Tank",     150, 5,  "Pictures/Tank.png",     "5 sebzés, 5 életerő gyógyítás"),
-    new Enemy("Assassin", 50,  12, "Pictures/Assassin.png", "12 sebzés"),
-    new Enemy("Mage",     100, 8,  "Pictures/Mage.png",     "8 sebzés"),
-    new Enemy("Healer",   100, 15, "Pictures/Healer.png",   "15 életerő gyógyítás"),
-    new Enemy("Boss",     300, 15, "Pictures/Boss.png",     "15 sebzés"),
+    new Enemy("Tank", 150, 5, "Pictures/Tank.png", "5 sebzés, 5 életerő gyógyítás"),
+    new Enemy("Assassin", 50, 12, "Pictures/Assassin.png", "12 sebzés"),
+    new Enemy("Mage", 100, 8, "Pictures/Mage.png", "8 sebzés"),
+    new Enemy("Healer", 100, 15, "Pictures/Healer.png", "15 életerő gyógyítás"),
+    new Enemy("Boss", 300, 15, "Pictures/Boss.png", "15 sebzés"),
 ]
 
 const Rounds = [
@@ -55,14 +55,13 @@ const ManaObserver = new MutationObserver(() => {
 ManaObserver.observe(document.getElementById("mana-current-player"), { characterData: true, subtree: true, childList: true });
 
 const HealthObserver = new MutationObserver(() => {
-    const current = parseInt(document.getElementById("health-current-player").innerText, 10);
-    const max = parseInt(document.getElementById("health-max-player").innerText, 10);
+    const current = parseFloat(document.getElementById("health-current-player").innerText, 10);
+    const max = parseFloat(document.getElementById("health-max-player").innerText, 10);
     const percentage = (current / max) * 100;
 
     document.querySelector("#hero .hp-container").style.background = `linear-gradient(90deg, rgba(255, 0, 0, 1) ${percentage}%, rgba(100, 100, 100, 0.5) ${percentage}%)`;
     document.querySelector("#health .current").innerText = current;
-    if (current <= 0)
-    {
+    if (current <= 0) {
         document.getElementById("lose").style.display = "block";
     }
 });
@@ -83,49 +82,51 @@ function NextRound() {
 function NextTurn() {
     index = 0;
     CurrentEnemies.forEach(enemy => {
-        if (enemy != null)
-        {
-            if(!document.getElementById(`enemy${index}`).classList.contains("stunned"))
-            {
-                switch (enemy.Name) 
-                {
+        if (enemy != null) {
+            if (!document.getElementById(`enemy${index}`).classList.contains("stunned")) {
+                multiplier = 1;
+                if (document.getElementById(`enemy${index}`).classList.contains("AttackDebuff"))
+                    multiplier *= .75;
+                switch (enemy.Name) {
                     case "Tank":
-                        document.getElementById("health-current-player").innerText -= EnemyTypes[0].Damage;
-                        for (i = 0; i < 3; i++)
-                        {
+                        document.getElementById("health-current-player").innerText -= EnemyTypes[0].Damage * multiplier;
+                        for (i = 0; i < 3; i++) {
                             if (document.getElementById(`health-current-enemy-${i}`) == null) continue;
                             CurrentHealth = document.getElementById(`health-current-enemy-${i}`);
                             MaxHealth = document.getElementById(`health-max-enemy-${i}`);
-                            if (parseInt(CurrentHealth.innerText) + 5 <= MaxHealth.innerText)
-                                CurrentHealth.innerText = parseInt(CurrentHealth.innerText) + 5;
+                            if (parseFloat(CurrentHealth.innerText) + 5 <= MaxHealth.innerText)
+                                CurrentHealth.innerText = parseFloat(CurrentHealth.innerText) + 5;
                             else if (CurrentHealth.innerText < MaxHealth.innerText)
                                 CurrentHealth.innerText = MaxHealth.innerText;
                         }
                         break;
                     case "Assassin":
-                        document.getElementById("health-current-player").innerText -= EnemyTypes[1].Damage;
+                        document.getElementById("health-current-player").innerText -= EnemyTypes[1].Damage * multiplier;
                         break;
                     case "Mage":
-                        document.getElementById("health-current-player").innerText -= EnemyTypes[2].Damage;
+                        document.getElementById("health-current-player").innerText -= EnemyTypes[2].Damage * multiplier;
                         break;
                     case "Healer":
                         CurrentHealth = document.getElementById(`health-current-enemy-0`);
                         MaxHealth = document.getElementById(`health-max-enemy-0`);
                         if (document.getElementById(`health-current-enemy-0`) == null || MaxHealth == CurrentHealth) break;
-                        if (parseInt(CurrentHealth.innerText) + 15 <= MaxHealth.innerText)
-                            CurrentHealth.innerText = parseInt(CurrentHealth.innerText) + 15;
+                        if (parseFloat(CurrentHealth.innerText) + 15 <= MaxHealth.innerText)
+                            CurrentHealth.innerText = parseFloat(CurrentHealth.innerText) + 15;
                         else
                             CurrentHealth.innerText = MaxHealth.innerText;
                         break;
                     case "Boss":
-                        document.getElementById("health-current-player").innerText -= EnemyTypes[4].Damage;
+                        document.getElementById("health-current-player").innerText -= EnemyTypes[4].Damage * multiplier;
                         break;
                     default:
                         break;
                 }
             }
             else
-                !document.getElementById(`enemy${index}`).classList.remove("stunned")
+            {
+                document.querySelector(`#enemy${index} .stun`).style.display = "none";
+                document.getElementById(`enemy${index}`).classList.remove("stunned");
+            }
         }
         index++;
     });
@@ -135,7 +136,7 @@ function NextTurn() {
 
 function RandomCard() {
     rand = Math.floor(Math.random() * 100);
-    
+
     if (rand < 25)
         return CardTypes[0];
     else if (rand < 45)
@@ -181,24 +182,24 @@ function CreateCard(card) {
     ManaCost.classList.add("card-mana");
     CardElement.appendChild(ManaCost);
 
-    CardElement.addEventListener('dragstart', function() {
+    CardElement.addEventListener('dragstart', function () {
         event.dataTransfer.setData('text/plain', event.target.dataset.type);
         event.dataTransfer.setData('dataType', event.target.dataset.cardType);
         event.dataTransfer.setData('id', event.target.id);
     });
-    CardElement.addEventListener('drag', function() {
+    CardElement.addEventListener('drag', function () {
         CardElement.style.display = "none";
     });
-    CardElement.addEventListener('dragend', function() {
+    CardElement.addEventListener('dragend', function () {
         CardElement.style.display = "inline";
     });
-    CardElement.addEventListener('animationend', function() {
+    CardElement.addEventListener('animationend', function () {
         CardElement.style.animation = "none";
     });
-    CardElement.addEventListener('mouseenter', function() {
+    CardElement.addEventListener('mouseenter', function () {
         CardElement.style.zIndex = "100";
     });
-    CardElement.addEventListener('mouseout', function() {
+    CardElement.addEventListener('mouseout', function () {
         AdjustCards();
     });
 
@@ -228,7 +229,7 @@ function AdjustCards() {
     const cards = document.querySelectorAll(".card");
     cards.forEach((card, index) => {
         card.style.zIndex = index;
-        card.style.margin = `0 -${num*5}px`
+        card.style.margin = `0 -${num * 5}px`
     });
 
 }
@@ -270,32 +271,32 @@ function CreateEnemy(enemy) {
 
     const Intentions = document.createElement("p");
     Intentions.innerHTML = "<h2>Indulatok: </h2> " + enemy.Desc;
+    const Effects = document.createElement("p");
+    Effects.innerHTML = "<br><span class='stun'><br>Elkábítva</span><span class='AttackDB'><br>Támadás gyengítve</span><span class='DefenseDB'><br>Védelem gyengítve</span>";
+    Intentions.innerHTML += Effects.innerHTML;
     Intentions.classList.add("intentions");
     EnemyElement.appendChild(Intentions);
 
     // Add MutationObserver for CurrentHealth changes
     const observer = new MutationObserver(() => {
-        const current = parseInt(document.getElementById(CurrentHealth.id).innerText, 10);
-        const max = parseInt(document.getElementById(MaxHealth.id).innerText, 10);
+        const current = parseFloat(document.getElementById(CurrentHealth.id).innerText, 10);
+        const max = parseFloat(document.getElementById(MaxHealth.id).innerText, 10);
         const percentage = (current / max) * 100;
 
         health.style.background = `linear-gradient(90deg, rgba(255, 0, 0, 1) ${percentage}%, rgba(100, 100, 100, 0.5) ${percentage}%)`;
         document.getElementById(EnemyElement.id).style.animation = "none";
         document.getElementById(EnemyElement.id).style.animation = "shake 0.2s";
-        
-        if (current <= 0)
-        {
+
+        if (current <= 0) {
             document.getElementById(EnemyElement.id).remove();
             CurrentEnemies[index] = null;
 
-            if (CurrentEnemies[0] == null && CurrentEnemies[1] == null && CurrentEnemies[2] == null)
-            {
+            if (CurrentEnemies[0] == null && CurrentEnemies[1] == null && CurrentEnemies[2] == null) {
                 CurrentRound = document.getElementById("current-round")
                 if (CurrentRound.innerText == 3)
                     document.getElementById("win").style.display = "block";
-                else 
-                {
-                    CurrentRound.innerText = parseInt(CurrentRound.innerText) + 1;
+                else {
+                    CurrentRound.innerText = parseFloat(CurrentRound.innerText) + 1;
                     NextRound();
                 }
             }
@@ -307,11 +308,11 @@ function CreateEnemy(enemy) {
     image.src = enemy.Image;
     EnemyElement.appendChild(image);
 
-    EnemyElement.addEventListener('animationend', function() {
+    EnemyElement.addEventListener('animationend', function () {
         document.getElementById(EnemyElement.id).style.animation = "none";
     });
     // EnemyElement.addEventListener('mouseenter', function() {
-    //     document.getElementById(CurrentHealth.id).innerText = parseInt(document.getElementById(CurrentHealth.id).innerText) - 10;
+    //     document.getElementById(CurrentHealth.id).innerText = parseFloat(document.getElementById(CurrentHealth.id).innerText) - 10;
     // });
     EnemyElement.addEventListener('dragover', DragOver);
     EnemyElement.addEventListener('drop', Drop);
@@ -324,8 +325,7 @@ function DragOver(event) {
     const draggedType = event.dataTransfer.getData('text/plain');
     const acceptType = event.target.dataset.accept;
 
-    if (draggedType == acceptType)
-    {
+    if (draggedType == acceptType) {
         event.preventDefault();
     }
 }
@@ -337,7 +337,7 @@ function Drop(event) {
     const DraggedId = event.dataTransfer.getData('id');
     if (DraggedType != event.target.dataset.accept) return;
     bShouldRemove = true;
-    
+
     if (DraggedType == "Enemy") {
         const Target = document.getElementById(event.target.id);
         const TargetIndex = Target.dataset.index;
@@ -355,7 +355,7 @@ function Drop(event) {
                     bShouldRemove = false;
                     break;
                 }
-                TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[0].Value * multiplier;
+                TargetHealth.innerText = parseFloat(TargetHealth.innerText) - CardTypes[0].Value * multiplier;
                 break;
             case "LightningStrike":
                 if (ManaDrain(CardTypes[1].Mana) == null) {
@@ -363,9 +363,9 @@ function Drop(event) {
                     break;
                 }
                 if (Target.classList.contains("stunned"))
-                    TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[1].Value * 2 * multiplier;
+                    TargetHealth.innerText = parseFloat(TargetHealth.innerText) - CardTypes[1].Value * 2 * multiplier;
                 else
-                    TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[1].Value * multiplier;
+                    TargetHealth.innerText = parseFloat(TargetHealth.innerText) - CardTypes[1].Value * multiplier;
                 break;
             case "PommelStrike":
                 if (ManaDrain(CardTypes[2].Mana) == null) {
@@ -373,8 +373,11 @@ function Drop(event) {
                     break;
                 }
                 if (!Target.classList.contains("stunned"))
+                {
                     Target.classList.add("stunned");
-                TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[2].Value * multiplier;
+                    document.querySelector(`#${event.target.id} .stun`).style.display = "inline";
+                }
+                TargetHealth.innerText = parseFloat(TargetHealth.innerText) - CardTypes[2].Value * multiplier;
                 break;
             case "AttackDebuff":
                 if (ManaDrain(CardTypes[4].Mana) == null) {
@@ -382,7 +385,10 @@ function Drop(event) {
                     break;
                 }
                 if (!Target.classList.contains("AttackDebuff"))
+                {
+                    document.querySelector(`#${event.target.id} .AttackDB`).style.display = "inline";
                     Target.classList.add("AttackDebuff");
+                }
                 break;
             case "DefenseDebuff":
                 if (ManaDrain(CardTypes[5].Mana) == null) {
@@ -390,14 +396,16 @@ function Drop(event) {
                     break;
                 }
                 if (!Target.classList.contains("DefenseDebuff"))
+                {
+                    document.querySelector(`#${event.target.id} .DefenseDB`).style.display = "inline";
                     Target.classList.add("DefenseDebuff");
+                }
                 break;
             default:
                 break;
         }
     }
-    else
-    {
+    else {
         const Target = document.getElementById("hero");
 
         switch (CardType) {
@@ -409,10 +417,9 @@ function Drop(event) {
                     break;
                 }
                 console.log("Heal")
-                if (parseInt(TargetHealth.innerText) + CardTypes[3].Value <= MaxHealth.innerText)
-                    TargetHealth.innerText = parseInt(TargetHealth.innerText) + CardTypes[3].Value;
-                else
-                {
+                if (parseFloat(TargetHealth.innerText) + CardTypes[3].Value <= MaxHealth.innerText)
+                    TargetHealth.innerText = parseFloat(TargetHealth.innerText) + CardTypes[3].Value;
+                else {
                     console.log("fuck");
                     TargetHealth.innerText = MaxHealth.innerText;
                 }
@@ -435,14 +442,14 @@ function Drop(event) {
                 CreateCard(RandomCard());
                 CreateCard(RandomCard());
                 break;
-        
+
             default:
                 break;
         }
     }
 
     if (bShouldRemove) {
-        
+
         document.getElementById(DraggedId).remove();
         CurrentHand[DraggedId[5]] = null;
     }
@@ -455,10 +462,8 @@ function RoundStart() {
     if (Target.classList.contains("AttackUp"))
         Target.classList.remove("AttackUp");
 
-    for (i = 0; i < CurrentHand.length; i++)
-    {
-        if (CurrentHand[i] != null)
-        {
+    for (i = 0; i < CurrentHand.length; i++) {
+        if (CurrentHand[i] != null) {
             document.getElementById(`card-${i}`).remove();
         }
         CurrentHand[i] = null;
@@ -473,7 +478,7 @@ function ManaDrain(Amount) {
 
     if (ManaBar.innerText - Amount < 0)
         return null;
-    else 
+    else
         ManaBar.innerText -= Amount;
     return "nothing";
 }
