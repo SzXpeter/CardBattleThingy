@@ -477,3 +477,124 @@ function ManaDrain(Amount) {
         ManaBar.innerText -= Amount;
     return "nothing";
 }
+
+
+function Drop(event) {
+    event.preventDefault();
+    const DraggedType = event.dataTransfer.getData('text/plain');
+    const CardType = event.dataTransfer.getData('dataType');
+    const DraggedId = event.dataTransfer.getData('id');
+    let bShouldRemove = true;
+    
+    if (DraggedType != event.target.dataset.accept) return;
+    
+    if (DraggedType == "Enemy") {
+        const Target = document.getElementById(event.target.id);
+        const TargetIndex = Target.dataset.index;
+        const TargetHealth = document.getElementById(`health-current-enemy-${TargetIndex}`);
+
+        let multiplier = 1;
+        if (Target.classList.contains("DefenseDebuff"))
+            multiplier *= 1.5;
+        if (document.getElementById("hero").classList.contains("AttackUp"))
+            multiplier *= 1.25;
+
+        switch (CardType) {
+            case "Attack":
+                if (ManaDrain(CardTypes[0].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[0].Value * multiplier;
+                break;
+            case "LightningStrike":
+                if (ManaDrain(CardTypes[1].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                if (Target.classList.contains("stunned"))
+                    TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[1].Value * 2 * multiplier;
+                else
+                    TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[1].Value * multiplier;
+                break;
+            case "PommelStrike":
+                if (ManaDrain(CardTypes[2].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                if (!Target.classList.contains("stunned"))
+                    Target.classList.add("stunned");
+                TargetHealth.innerText = parseInt(TargetHealth.innerText) - CardTypes[2].Value * multiplier;
+                break;
+            case "AttackDebuff":
+                if (ManaDrain(CardTypes[4].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                if (!Target.classList.contains("AttackDebuff"))
+                    Target.classList.add("AttackDebuff");
+                break;
+            case "DefenseDebuff":
+                if (ManaDrain(CardTypes[5].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                if (!Target.classList.contains("DefenseDebuff"))
+                    Target.classList.add("DefenseDebuff");
+                break;
+            default:
+                break;
+        }
+    } else {
+        const Target = document.getElementById("hero");
+
+        switch (CardType) {
+            case "Heal":
+                const MaxHealth = document.getElementById("health-max-player");
+                const TargetHealth = document.getElementById("health-current-player");
+                if (TargetHealth.innerText == MaxHealth.innerText || ManaDrain(CardTypes[3].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                if (parseInt(TargetHealth.innerText) + CardTypes[3].Value <= MaxHealth.innerText) {
+                    TargetHealth.innerText = parseInt(TargetHealth.innerText) + CardTypes[3].Value;
+                } else {
+                    TargetHealth.innerText = MaxHealth.innerText;
+                }
+
+                // Zöld színezés a karakter képére
+                const heroImage = document.querySelector("#hero img"); // Feltételezve, hogy van egy <img> a hero elemben
+                heroImage.classList.add("hero-heal-effect");
+
+                // Visszaállítás 3 másodperc után
+                setTimeout(() => {
+                    heroImage.classList.remove("hero-heal-effect");
+                }, 3000);
+
+                break;
+            case "AttackUp":
+                if (ManaDrain(CardTypes[6].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                if (!Target.classList.contains("AttackUp"))
+                    Target.classList.add("AttackUp");
+                break;
+            case "DrawCards":
+                if (ManaDrain(CardTypes[7].Mana) == null) {
+                    bShouldRemove = false;
+                    break;
+                }
+                CreateCard(RandomCard());
+                CreateCard(RandomCard());
+                break;
+            default:
+                break;
+        }
+    }
+
+    if (bShouldRemove) {
+        document.getElementById(DraggedId).remove();
+        CurrentHand[DraggedId[5]] = null;
+    }
+}

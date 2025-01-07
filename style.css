@@ -411,3 +411,46 @@ h1 {
   margin: 0;
   padding: 20px 10px;
 }
+
+/* Rövidebb ideig tartó és erősebb zöld aura effektus */
+.hero-heal-effect {
+  position: relative;
+  filter: hue-rotate(90deg) saturate(500%) brightness(180%);
+  transition: filter 0.1s ease, box-shadow 0.1s ease-in-out;
+}
+
+/* Az aura előtt extra fények és ragyogás */
+.hero-heal-effect::before {
+  content: '';
+  position: absolute;
+  top: -10px; /* Kiterjesztjük a ragyogást kívülre */
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 50%;
+  background: rgba(0, 255, 0, 0.7);  /* Erősebb zöld */
+  box-shadow: 0 0 50px 15px rgba(0, 255, 0, 0.9), 0 0 100px 30px rgba(0, 255, 0, 0.8);  /* Nagyobb fényhatás */
+  animation: glow 0.015s ease-out forwards, pulse 0.03s ease-in-out forwards;
+}
+
+/* Ragyogás animációja - gyors és intenzív */
+@keyframes glow {
+  0% {
+      transform: scale(1);
+      opacity: 0.8;
+  }
+  100% {
+      transform: scale(1.1);
+      opacity: 1;
+  }
+}
+
+/* Pulzáló hatás gyorsabb pulzálás */
+@keyframes pulse {
+  0% {
+      box-shadow: 0 0 50px 15px rgba(0, 255, 0, 0.9), 0 0 100px 30px rgba(0, 255, 0, 0.8);
+  }
+  100% {
+      box-shadow: 0 0 75px 20px rgba(0, 255, 0, 1), 0 0 150px 40px rgba(0, 255, 0, 0.9);
+  }
+}
